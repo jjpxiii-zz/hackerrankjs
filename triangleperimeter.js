@@ -8,7 +8,7 @@ module.exports = {
 			for (var i=0; i < numbers.length - 2; i++)
 			{
 				var a = +numbers[i];
-				var b = +numbers[i+1];
+				var b = +numbers[i+1]; 
 				var c = +numbers[i+2];
 				if (a+b > c && a+c > b && b+c>a)
 				{
