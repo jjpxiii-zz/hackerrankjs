@@ -1,3 +1,4 @@
-var input = "5\n1 1 1 3 3";
-var triangle = require('./triangleperimeter')
-console.log(triangle.processData(input));
+var input = "5 2 3\n1 3 3";
+var triangle = require('./triangleperimeter');
+var triplets = require('./triplets');
+console.log(triplets.processData(input));
