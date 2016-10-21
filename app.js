@@ -36,7 +36,7 @@ if (!signature) signature = [];
   if (n===2 && signature.length == 1) return [signature[0],signature[1]];
   if (n===3 && signature.length == 2) return [signature[0],signature[1], signature[2]];
   if (signature.length==0) signature.push(signature[0],signature[1],signature[2], signature[0] + signature[1] + signature[2]);
-else if (n > 3) signature.push(signature[signature.length-2] + signature[signature.length-1] + signature[signature.length]);
+else if (n > 3) signature.push(signature[signature.length-3] + signature[signature.length-2] + signature[signature.length]);
   return tribonacci(signature, n-1);
 }
 
