@@ -152,3 +152,30 @@ console.log(isValidIP('0.0.0.0'));
 console.log(isValidIP('123.45.67.89'));
 
 //console.log(squareOrSquareRoot([4, 3, 9, 7, 2, 1]));
+
+function computeThreesAndFives(n) {
+    var res = 0
+    var n3 = n - (n%3)
+    var n5 = n - (n%5)
+    var n15 = n - (n%15)
+    var sum3 = 0
+    var sum5 = 0
+    var sum15 = 0
+
+    sum3 = n3 * (n3+3) / 6
+    sum5 = n5 * (n5+5) / 10
+    sum15 = n15 * (n15+15) / 30
+    
+    return sum3 + sum5 - sum15
+}
+
+console.log(computeThreesAndFives(9));
+
+//var numberOfTimes = Int(readLine()!)!
+//var n = Int(readLine()!)!
+//var n = str.components(separatedBy :"\n")
+
+// for (var i=1; i<numberOfTimes; i++)
+// {
+//     print(computeThreesAndFives(Int(readLine()!)!))
+// }
