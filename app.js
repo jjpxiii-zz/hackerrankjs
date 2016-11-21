@@ -247,24 +247,32 @@ console.log(decompose("2/8"));
 //     print(computeThreesAndFives(Int(readLine()!)!))
 // }
 
-var decodeBits = function(bits){
-    // ToDo: Accept 0's and 1's, return dots, dashes and spaces
-    var bits = bits.trim();
-    var tx = 1;
-    var space = "0000000";
-    while (bits.indexOf(space.repeat(tx)) > -1)
+var decodeBits = function (bits) {
+  // ToDo: Accept 0's and 1's, return dots, dashes and spaces
+  console.log(bits);
+  var bits = bits.trim().replace(/^0*/, "").replace(/0*$/, "");
+  if (bits.indexOf(0) == -1) return '.';
+  var tx = 1;
+  var space = "0000000";
+  while (bits.indexOf(space.repeat(tx)) > -1) {
+    tx++;
+  }
+  tx--;
+  var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), ''): 
+  bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '');
+  console.log(t);
+  return t;
+}
+
+var decodeMorse = function (morseCode) {
+  // ToDo: Accept dots, dashes and spaces, return human-readable message
+  var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
+  var res = r.map(function (word)
     {
-      tx++;
+      return word == "#" ? " " : MORSE_CODE[word];
     }
-    tx--;
-    var t = bits.replace('0'.repeat(7*tx)/g, ' ').replace("1".repeat(3*tx), '-').replace('0'.repeat(3*tx), '').replace('1'.repeat(tx), '.').replace('0'.repeat(tx), '');
-    console.log(t); 
-    return t;
+  );
+  return res.join("");
 }
 
-var decodeMorse = function(morseCode){
-    // ToDo: Accept dots, dashes and spaces, return human-readable message
-    return morseCode.replace('.', MORSE_CODE['.']).replace('-', MORSE_CODE['-']).replace(' ', '');
-}
-
-decodeBits('1100110011001100000011000000111111001100111111001111110000000000000011001111110011111100111111000000110011001111110000001111110011001100000011');
+decodeMorse(decodeBits('000000011100000'));
