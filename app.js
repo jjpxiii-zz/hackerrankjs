@@ -259,7 +259,8 @@ var decodeBits = function (bits) {
   }
   tx--;
   var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), ''): 
-  bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '');
+  bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
+  bits.replace(/0+/gi, '#').replace(/1+/gi, '.').replace('#', ' ');
   console.log(t);
   return t;
 }
@@ -275,4 +276,4 @@ var decodeMorse = function (morseCode) {
   return res.join("");
 }
 
-decodeMorse(decodeBits('000000011100000'));
+decodeMorse(decodeBits('11111100111111'));
