@@ -119,28 +119,27 @@ function arraysEqual(a, b) {
   return true;
 }
 
-function validParentheses(parens){
+function validParentheses(parens) {
   var s = [];
-  parens.split('').forEach(x => x =='(' ? s.push('(') : s.pop() == undefined ? s.push(')') : void(0));
+  parens.split('').forEach(x => x == '(' ? s.push('(') : s.pop() == undefined ? s.push(')') : void (0));
   return s.length == 0;
 }
 
 function isValidIP(str) {
-console.log(str)
-//return res = str ? false : str.split('.').length != 4 ? false : str.trim().split('.').every(o => parseInt(o) >= 0 && parseInt(o) < 256);
-var s = str.trim().split('.');
-console.log(s);
-for (var i=0;i<4;i++)
-{
-  if(str.indexOf(' ') > 0) return false;
-  if(str.trim()=='0.0.0.0') return false;
-  if (!str) return false;
-  if (str.trim().split('.').length != 4) return false;
-  if (parseInt(s[i].trim()) >= 0 && parseInt(s[i].trim()) < 256)
-    continue;
-  return false;
-}  
-return true;
+  console.log(str)
+  //return res = str ? false : str.split('.').length != 4 ? false : str.trim().split('.').every(o => parseInt(o) >= 0 && parseInt(o) < 256);
+  var s = str.trim().split('.');
+  console.log(s);
+  for (var i = 0; i < 4; i++) {
+    if (str.indexOf(' ') > 0) return false;
+    if (str.trim() == '0.0.0.0') return false;
+    if (!str) return false;
+    if (str.trim().split('.').length != 4) return false;
+    if (parseInt(s[i].trim()) >= 0 && parseInt(s[i].trim()) < 256)
+      continue;
+    return false;
+  }
+  return true;
   //return str.trim().split('.').every(o => parseInt(o) >= 0 && parseInt(o) < 256);;
 }
 
@@ -154,22 +153,90 @@ console.log(isValidIP('123.45.67.89'));
 //console.log(squareOrSquareRoot([4, 3, 9, 7, 2, 1]));
 
 function computeThreesAndFives(n) {
-    var res = 0
-    var n3 = n - (n%3)
-    var n5 = n - (n%5)
-    var n15 = n - (n%15)
-    var sum3 = 0
-    var sum5 = 0
-    var sum15 = 0
+  var res = 0
+  var n3 = n - (n % 3)
+  var n5 = n - (n % 5)
+  var n15 = n - (n % 15)
+  var sum3 = 0
+  var sum5 = 0
+  var sum15 = 0
 
-    sum3 = n3 * (n3+3) / 6
-    sum5 = n5 * (n5+5) / 10
-    sum15 = n15 * (n15+15) / 30
-    
-    return sum3 + sum5 - sum15
+  sum3 = n3 * (n3 + 3) / 6
+  sum5 = n5 * (n5 + 5) / 10
+  sum15 = n15 * (n15 + 15) / 30
+
+  return sum3 + sum5 - sum15
 }
 
-console.log(computeThreesAndFives(9));
+Number.prototype.mod = function (n) {
+  return ((this % n) + n) % n;
+};
+
+// var gcd = function (a, b) {
+//   if (!b) {
+//     return a;
+//   }
+//   return gcd(b, a % b);
+// };
+
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+
+  if (b > a) {
+    var temp = a;
+    a = b;
+    b = temp;
+  }
+
+  while (true) {
+    a %= b;
+    if (a === 0) { return b; }
+    b %= a;
+    if (b === 0) { return a; }
+  }
+}
+
+function decomposeFraction(n, d, arr) {
+  if (!arr)
+    var arr = [];
+  if (n == 0 || !n || d == 0 || !d) {
+    return [];
+  }
+  if (n % d == 0)
+    arr.push((n / d).toString());
+  else if (n == 1)
+    arr.push(n + (d != 1 ? ("/" + d) : ""));
+  else {
+    arr.push("1" + (Math.ceil(d / n) == 1 ? "" : "/" + Math.ceil(d / n)));
+    var n2 = (-d).mod(n);
+    if (n2 == 0)
+      return arr;
+    var d2 = d * Math.ceil(d / n);
+    decomposeFraction(n2 / gcd(n2, d2), d2 / gcd(n2, d2), arr);
+  }
+  return arr;
+}
+
+function decompose(n) {
+  if (n.indexOf('/') > 0) {
+    var num = Number(n.substring(0, n.indexOf('/')).trim());
+    var denum = Number(n.substring(n.indexOf('/') + 1).trim());
+  }
+  else if (n.indexOf('.') > 0) {
+    var num = Number(n.trim());
+    var denum = 1;
+    while (num % 1 != 0) {
+      num *= 10;
+      denum *= 10;
+    }
+  }
+  return decomposeFraction(num, denum, null);
+}
+
+
+
+console.log(decompose("2/8"));
 
 //var numberOfTimes = Int(readLine()!)!
 //var n = Int(readLine()!)!
@@ -179,3 +246,25 @@ console.log(computeThreesAndFives(9));
 // {
 //     print(computeThreesAndFives(Int(readLine()!)!))
 // }
+
+var decodeBits = function(bits){
+    // ToDo: Accept 0's and 1's, return dots, dashes and spaces
+    var bits = bits.trim();
+    var tx = 1;
+    var space = "0000000";
+    while (bits.indexOf(space.repeat(tx)) > -1)
+    {
+      tx++;
+    }
+    tx--;
+    var t = bits.replace('0'.repeat(7*tx)/g, ' ').replace("1".repeat(3*tx), '-').replace('0'.repeat(3*tx), '').replace('1'.repeat(tx), '.').replace('0'.repeat(tx), '');
+    console.log(t); 
+    return t;
+}
+
+var decodeMorse = function(morseCode){
+    // ToDo: Accept dots, dashes and spaces, return human-readable message
+    return morseCode.replace('.', MORSE_CODE['.']).replace('-', MORSE_CODE['-']).replace(' ', '');
+}
+
+decodeBits('1100110011001100000011000000111111001100111111001111110000000000000011001111110011111100111111000000110011001111110000001111110011001100000011');
