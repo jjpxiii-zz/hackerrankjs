@@ -247,20 +247,34 @@ console.log(decompose("2/8"));
 //     print(computeThreesAndFives(Int(readLine()!)!))
 // }
 
+function palindrome(str) {
+  var len = str.length;
+  for (var i = 0; i < Math.floor(len / 2); i++) {
+    if (str[i] !== str[len - 1 - i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 var decodeBits = function (bits) {
   // ToDo: Accept 0's and 1's, return dots, dashes and spaces
   console.log(bits);
-  var bits = bits.trim().replace(/^0*/, "").replace(/0*$/, "");
+  var bits = bits.trim().replace(/^0*|0*$/, "");
   if (bits.indexOf(0) == -1) return '.';
+  if (palindrome(bits)) {
+    if ((bits.match(/1/g) || []).length / (bits.match(/0/g) || []).length == 6) return '--';
+    if ((bits.match(/1/g) || []).length > (bits.match(/0/g) || []).length) return '..';
+  }
   var tx = 1;
   var space = "0000000";
   while (bits.indexOf(space.repeat(tx)) > -1) {
     tx++;
   }
   tx--;
-  var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), ''): 
-  bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
-  bits.replace(/0+/gi, '#').replace(/1+/gi, '.').replace('#', ' ');
+  var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), '') :
+    bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
+      bits.replace(/0{3,}/gi, '#').replace(/1{3,}/gi, '-').replace(/1{1,2}/gi, '.').replace('#', ' ').replace(/0{1,2}/gi, '');
   console.log(t);
   return t;
 }
@@ -268,12 +282,12 @@ var decodeBits = function (bits) {
 var decodeMorse = function (morseCode) {
   // ToDo: Accept dots, dashes and spaces, return human-readable message
   var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
-  var res = r.map(function (word)
-    {
-      return word == "#" ? " " : MORSE_CODE[word];
-    }
+  var res = r.map(function (word) {
+    return word == "#" ? " " : MORSE_CODE[word];
+  }
   );
   return res.join("");
 }
 
-decodeMorse(decodeBits('11111100111111'));
+decodeBits('11111100111111');
+decodeBits('1110111');
