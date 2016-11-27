@@ -247,6 +247,24 @@ console.log(decompose("2/8"));
 //     print(computeThreesAndFives(Int(readLine()!)!))
 // }
 
+function formatDuration(seconds) {
+  // Complete this function
+  if (seconds == 0) return "now";
+  var years = Math.floor(seconds / 31536000);
+  var days = Math.floor(seconds % 31536000 / 86400);
+  var hours =  Math.floor(seconds % 31536000 % 86400 / 3600);
+  var minutes =  Math.floor(seconds % 31536000 % 86400 % 3600 / 60);
+  var seconds = seconds % 31536000 % 86400 % 3600 % 60;
+  return (years > 0 ? years + ' year' + (years > 1 ? 's, ' : ', ') : '') + 
+  (days > 0 ? days + ' day' + (day > 1 ? 's, ' : ', ') : '') +
+  (hours > 0 ? hours + ' hour' + (hours > 1 ? 's, ' : ', ') : '') +
+  (minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's ' : ' ') : '') +
+  (seconds > 0 ? (minutes > 0 ? 'and ': '') + seconds + ' second' + (seconds > 1 ? 's' : '') : '');
+}
+
+console.log(formatDuration(62));
+console.log(formatDuration(3662));
+
 function palindrome(str) {
   var len = str.length;
   for (var i = 0; i < Math.floor(len / 2); i++) {
@@ -279,6 +297,24 @@ var decodeBits = function (bits) {
   return t;
 }
 
+var decodeBitsAdvanced = function (bits) {
+  bits = bits.replace(/^0*|0*$/gi, "");
+
+  var rateMin = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
+  var matching = bits.match(new RegExp("1{" + rateMin + "," + 3 * rateMin + "}", "gi"));
+  var elements = matching.length
+  var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
+  var rate = Math.floor(rateMin).toString() + "," + Math.ceil(ratefloat).toString();
+  bits = bits
+    .replace(new RegExp('(?:111){' + rate + '}(?:0{' + rate + '}|$)', 'g'), '-')
+    .replace(new RegExp('1{' + rate + '}(?:0{' + rate + '}|$)', 'g'), '.')
+    .replace(new RegExp('(?:000000){' + rate + '}', 'g'), '   ')
+    .replace(new RegExp('(?:00){' + rate + '}', 'g'), ' ')
+
+  console.log(bits);
+  return bits;
+}
+
 var decodeMorse = function (morseCode) {
   // ToDo: Accept dots, dashes and spaces, return human-readable message
   var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
@@ -288,6 +324,19 @@ var decodeMorse = function (morseCode) {
   );
   return res.join("");
 }
+// var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function(b) { return b.length }));
+// var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
+// var matching = "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(new RegExp("1{" + rate + "," + 2 * rate + "}", "gi"));
+// var elements = matching.length
+// var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
 
-decodeBits('11111100111111');
-decodeBits('1110111');
+// console.log(rate);
+var test = "110110100";
+console.log(test.replace(new RegExp(/1{1,2}/gi), "!"));
+console.log(test.replace(new RegExp('1{1,2}(?:0{1,2}|$)', 'g'), '!'));
+decodeBitsAdvanced('0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000');
+
+
+// decodeBits('11111100111111');
+// decodeBits('1110111');
+
