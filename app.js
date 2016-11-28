@@ -252,89 +252,118 @@ function formatDuration(seconds) {
   if (seconds == 0) return "now";
   var years = Math.floor(seconds / 31536000);
   var days = Math.floor(seconds % 31536000 / 86400);
-  var hours =  Math.floor(seconds % 31536000 % 86400 / 3600);
-  var minutes =  Math.floor(seconds % 31536000 % 86400 % 3600 / 60);
+  var hours = Math.floor(seconds % 31536000 % 86400 / 3600);
+  var minutes = Math.floor(seconds % 31536000 % 86400 % 3600 / 60);
   var seconds = seconds % 31536000 % 86400 % 3600 % 60;
-  return (years > 0 ? years + ' year' + (years > 1 ? 's, ' : ', ') : '') + 
-  (days > 0 ? days + ' day' + (day > 1 ? 's, ' : ', ') : '') +
-  (hours > 0 ? hours + ' hour' + (hours > 1 ? 's, ' : ', ') : '') +
-  (minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's ' : ' ') : '') +
-  (seconds > 0 ? (minutes > 0 ? 'and ': '') + seconds + ' second' + (seconds > 1 ? 's' : '') : '');
+  return (years > 0 ? years + ' year' + (years > 1 ? 's, ' : ', ') : '') +
+    (days > 0 ? days + ' day' + (day > 1 ? 's, ' : ', ') : '') +
+    (hours > 0 ? hours + ' hour' + (hours > 1 ? 's, ' : ', ') : '') +
+    (minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's ' : ' ') : '') +
+    (seconds > 0 ? (minutes > 0 ? 'and ' : '') + seconds + ' second' + (seconds > 1 ? 's' : '') : '');
 }
 
-console.log(formatDuration(62));
-console.log(formatDuration(3662));
+function decodeAscii(L, H, T) {
+  var tab = [];
+  T = 'RA';
+  var text = "\
+ #  ##   ## ##  ### ###  ## # # ###  ## # # #   # # ###  #  ##   #  ##   ## ### # # # # # # # # # # ### ### \
+# # # # #   # # #   #   #   # #  #    # # # #   ### # # # # # # # # # # #    #  # # # # # # # # # #   #   # \
+### ##  #   # # ##  ##  # # ###  #    # ##  #   ### # # # # ##  # # ##   #   #  # # # # ###  #   #   #   ## \
+# # # # #   # # #   #   # # # #  #  # # # # #   # # # # # # #    ## # #   #  #  # # # # ### # #  #  #       \
+# # ##   ## ##  ### #    ## # # ###  #  # # ### # # # #  #  #     # # # ##   #  ###  #  # # # #  #  ###  #  ";
 
-function palindrome(str) {
-  var len = str.length;
-  for (var i = 0; i < Math.floor(len / 2); i++) {
-    if (str[i] !== str[len - 1 - i]) {
-      return false;
+  for (var i = 0; i < H; i++) {
+    //var ROW = readline();
+    var index = 0;
+    for (var j = 0; j < ROW.length; j += L) {
+      tab[index][i] = text[i].substring(j, L);
     }
+    index++;
   }
-  return true;
+  var res = '';
+  for (var i = 0; i < H; i++) {
+    for (var j = 0; j < T.length; j++) {
+      res += tab['abcdefghijklmnopqrstuvwxyz?'.indexOf(T.toLowerCase()[j])][i];
+    }
+    res +='\n';
+  }
 }
 
-var decodeBits = function (bits) {
-  // ToDo: Accept 0's and 1's, return dots, dashes and spaces
-  console.log(bits);
-  var bits = bits.trim().replace(/^0*|0*$/, "");
-  if (bits.indexOf(0) == -1) return '.';
-  if (palindrome(bits)) {
-    if ((bits.match(/1/g) || []).length / (bits.match(/0/g) || []).length == 6) return '--';
-    if ((bits.match(/1/g) || []).length > (bits.match(/0/g) || []).length) return '..';
+  console.log(decodeAscii(4, 5, 'E'))
+
+  console.log(formatDuration(62));
+  console.log(formatDuration(3662));
+
+  function palindrome(str) {
+    var len = str.length;
+    for (var i = 0; i < Math.floor(len / 2); i++) {
+      if (str[i] !== str[len - 1 - i]) {
+        return false;
+      }
+    }
+    return true;
   }
-  var tx = 1;
-  var space = "0000000";
-  while (bits.indexOf(space.repeat(tx)) > -1) {
-    tx++;
+
+  var decodeBits = function (bits) {
+    // ToDo: Accept 0's and 1's, return dots, dashes and spaces
+    console.log(bits);
+    var bits = bits.trim().replace(/^0*|0*$/, "");
+    if (bits.indexOf(0) == -1) return '.';
+    if (palindrome(bits)) {
+      if ((bits.match(/1/g) || []).length / (bits.match(/0/g) || []).length == 6) return '--';
+      if ((bits.match(/1/g) || []).length > (bits.match(/0/g) || []).length) return '..';
+    }
+    var tx = 1;
+    var space = "0000000";
+    while (bits.indexOf(space.repeat(tx)) > -1) {
+      tx++;
+    }
+    tx--;
+    var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), '') :
+      bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
+        bits.replace(/0{3,}/gi, '#').replace(/1{3,}/gi, '-').replace(/1{1,2}/gi, '.').replace('#', ' ').replace(/0{1,2}/gi, '');
+    console.log(t);
+    return t;
   }
-  tx--;
-  var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), '') :
-    bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
-      bits.replace(/0{3,}/gi, '#').replace(/1{3,}/gi, '-').replace(/1{1,2}/gi, '.').replace('#', ' ').replace(/0{1,2}/gi, '');
-  console.log(t);
-  return t;
-}
 
-var decodeBitsAdvanced = function (bits) {
-  bits = bits.replace(/^0*|0*$/gi, "");
+  var decodeBitsAdvanced = function (bits) {
+    bits = bits.replace(/^0*|0*$/gi, "");
 
-  var rateMin = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
-  var matching = bits.match(new RegExp("1{" + rateMin + "," + 3 * rateMin + "}", "gi"));
-  var elements = matching.length
-  var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
-  var rate = Math.floor(rateMin).toString() + "," + Math.ceil(ratefloat).toString();
-  bits = bits
-    .replace(new RegExp('(?:111){' + rate + '}(?:0{' + rate + '}|$)', 'g'), '-')
-    .replace(new RegExp('1{' + rate + '}(?:0{' + rate + '}|$)', 'g'), '.')
-    .replace(new RegExp('(?:000000){' + rate + '}', 'g'), '   ')
-    .replace(new RegExp('(?:00){' + rate + '}', 'g'), ' ')
+    var rateMin = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
+    var matching = bits.match(new RegExp("1{" + rateMin + "," + 3 * rateMin + "}", "gi"));
+    var elements = matching.length
+    var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
+    var rate = Math.floor(rateMin).toString() + "," + Math.ceil(ratefloat).toString();
+    bits = bits
+      .replace(new RegExp('(?:111){' + rate + '}(?:0{' + rate + '}|$)', 'g'), '-')
+      .replace(new RegExp('1{' + rate + '}(?:0{' + rate + '}|$)', 'g'), '.')
+      .replace(new RegExp('(?:000000){' + rate + '}', 'g'), '   ')
+      .replace(new RegExp('(?:00){' + rate + '}', 'g'), ' ')
 
-  console.log(bits);
-  return bits;
-}
-
-var decodeMorse = function (morseCode) {
-  // ToDo: Accept dots, dashes and spaces, return human-readable message
-  var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
-  var res = r.map(function (word) {
-    return word == "#" ? " " : MORSE_CODE[word];
+    console.log(bits);
+    return bits;
   }
-  );
-  return res.join("");
-}
-// var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function(b) { return b.length }));
-// var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
-// var matching = "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(new RegExp("1{" + rate + "," + 2 * rate + "}", "gi"));
-// var elements = matching.length
-// var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
 
-// console.log(rate);
-var test = "110110100";
-console.log(test.replace(new RegExp(/1{1,2}/gi), "!"));
-console.log(test.replace(new RegExp('1{1,2}(?:0{1,2}|$)', 'g'), '!'));
-decodeBitsAdvanced('0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000');
+  var decodeMorse = function (morseCode) {
+    // ToDo: Accept dots, dashes and spaces, return human-readable message
+    var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
+    var res = r.map(function (word) {
+      return word == "#" ? " " : MORSE_CODE[word];
+    }
+    );
+    return res.join("");
+  }
+  // var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function(b) { return b.length }));
+  // var rate = Math.min.apply(null, "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(/0+|1+/g).map(function (b) { return b.length }));
+  // var matching = "0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000".match(new RegExp("1{" + rate + "," + 2 * rate + "}", "gi"));
+  // var elements = matching.length
+  // var ratefloat = matching.map(function (b) { return b.length }).reduce(function (a, b) { return a + b; }) / elements;
+
+  // console.log(rate);
+  var test = "110110100";
+  console.log(test.replace(new RegExp(/1{1,2}/gi), "!"));
+  console.log(test.replace(new RegExp('1{1,2}(?:0{1,2}|$)', 'g'), '!'));
+  decodeBitsAdvanced('0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000');
 
 
 // decodeBits('11111100111111');
