@@ -258,9 +258,7 @@ function palindrome(str) {
 }
 
 var decodeBits = function (bits) {
-  // ToDo: Accept 0's and 1's, return dots, dashes and spaces
-  console.log(bits);
-  var bits = bits.trim().replace(/^0*|0*$/, "");
+  var bits = bits.trim().replace(/^0+|0+$/g, "");
   if (bits.indexOf(0) == -1) return '.';
   if (palindrome(bits)) {
     if ((bits.match(/1/g) || []).length / (bits.match(/0/g) || []).length == 6) return '--';
@@ -275,19 +273,20 @@ var decodeBits = function (bits) {
   var t = tx > 0 ? bits.replace(new RegExp('0'.repeat(7 * tx), 'gi'), '   ').replace(new RegExp("1".repeat(3 * tx), 'gi'), '-').replace(new RegExp('0'.repeat(3 * tx), 'gi'), ' ').replace(new RegExp('1'.repeat(tx), 'gi'), '.').replace(new RegExp('0'.repeat(tx), 'gi'), '') :
     bits.indexOf("01110") > -1 ? bits.replace(new RegExp("111", 'gi'), '-').replace(new RegExp('1', 'gi'), '.').replace(new RegExp('0', 'gi'), '') :
       bits.replace(/0{3,}/gi, '#').replace(/1{3,}/gi, '-').replace(/1{1,2}/gi, '.').replace('#', ' ').replace(/0{1,2}/gi, '');
-  console.log(t);
   return t;
 }
 
-var decodeMorse = function (morseCode) {
-  // ToDo: Accept dots, dashes and spaces, return human-readable message
-  var r = morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ');
-  var res = r.map(function (word) {
-    return word == "#" ? " " : MORSE_CODE[word];
-  }
-  );
-  return res.join("");
+var decodeBitsAdvanced = function(bits){
+    var bits = bits.replace(/^0+|0+$/g, "");
+    var t = bits.replace('111', '-').replace('000', ' ').replace('1', '.').replace('0', '');
+    console.log(t);
+    return t;
 }
 
-decodeBits('11111100111111');
-decodeBits('1110111');
+var decodeMorse = function (morseCode) {
+  return morseCode.trim().replace(new RegExp("   ", 'gi'), ' # ').split(' ').map(function (word) { return word == "#" ? " " : MORSE_CODE[word];}).join('');
+}
+
+// decodeBits('11111100111111');
+// decodeBits('1110111');
+decodeBitsAdvanced('0000000011011010011100000110000001111110100111110011111100000000000111011111111011111011111000000101100011111100000111110011101100000100000');
