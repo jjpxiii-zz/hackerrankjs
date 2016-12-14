@@ -37,7 +37,8 @@ module.exports = {
         var count1 = bits.match(/1+/g).map(function (b) { return b.length });
         var count0 = bits.match(/0+/g).map(function (b) { return b.length });
 
-        var l1 = bits.match(/0+|1+/g);
+        var l1 = bits.match(/1+/g);
+        var l0 = bits.match(/0+/g);
 
         var a = {}
         for (var i = 0; i < l1.length; i++) {
@@ -81,8 +82,51 @@ module.exports = {
         console.log(c[2])
         console.log(c[3])
         console.log(c[4])
+
+        var az = {}
+        for (var i = 0; i < l0.length; i++) {
+            if (!az[l0[i].length]) az[l0[i].length] = 1
+            else az[l0[i].length] = az[l0[i].length] + 1
+        }
+
+        var rateDots = '';
+        var rateDashes = '';
+        var rateLongSpaces = '';
+
+        var index = 1;
+        var firstInt = false;
+        var secondInt = false;
+
+        for (var i = 1; i <= Number(Object.keys(az).slice(-1)[0]); i++) {
+            // if (index > Object.keys(a).length) break;
+            if (!az[i]) {
+                if (!firstInt && rateDots.length > 0) firstInt = true;
+                else if (!secondInt && rateDashes.length > 0) secondInt = true;
+                continue;
+            }
+            if (!firstInt) {
+                rateDots += i + ',';
+                continue;
+            }
+            if (!secondInt) {
+                rateDashes += i + ',';
+                continue;
+            }
+
+            rateLongSpaces += i + ',';
+            continue;
+        }
+
+        var keys = []; for (var key in az) keys.push(key);
+        var cz = keys.sort(function (y, z) { return az[z] - az[y] });
+
+        console.log("z "+cz[0])
+        console.log(cz[1])
+        console.log(cz[2])
+        console.log(cz[3])
+        console.log(cz[4])
         // cas difficile
-        if (rateDots.length < 0 || rateDashes < 0 || rateLongSpaces < 0) {
+        if (rateDots.length < 0 || rateDashes < 2 || rateLongSpaces < 2) {
             console.log('hard')
             rateDots = rate + ',' + (rate * 3 - 1)
             rateDashes = (rate * 3) + ',' + (rate * 7 - 1)
